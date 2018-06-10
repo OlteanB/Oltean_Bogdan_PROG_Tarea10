@@ -6,7 +6,6 @@
 package mvc.modelo.bd;
 
 import java.util.LinkedList;
-import java.util.List;
 import mvc.modelo.IModeloAlquilerVehiculo;
 import mvc.modelo.bd.dao.Alquileres;
 import mvc.modelo.bd.dao.Clientes;

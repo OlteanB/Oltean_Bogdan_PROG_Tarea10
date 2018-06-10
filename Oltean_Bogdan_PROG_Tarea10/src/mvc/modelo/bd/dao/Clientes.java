@@ -56,9 +56,9 @@ public class Clientes {
             sentencia.setString(1, cliente.getNombre());
             sentencia.setString(2, cliente.getDNI());
             DireccionPostal direccion = cliente.getDireccionPostal();
-            sentencia.setString(3, direccion.getCalle());
-            sentencia.setString(4, direccion.getLocalidad());
-            sentencia.setString(5, direccion.getCodigoPostal());
+            sentencia.setString(3, direccion.getCodigoPostal());//direccion.getCalle());
+            sentencia.setString(4, direccion.getCalle());//direccion.getLocalidad());
+            sentencia.setString(5, direccion.getLocalidad());//direccion.getCodigoPostal());
             sentencia.executeUpdate();
         } catch (MySQLIntegrityConstraintViolationException e) {
             ConexionBD.cierraConexion(conexion);
@@ -103,7 +103,7 @@ public class Clientes {
                 String calle = filas.getString("calle");
                 String localidad = filas.getString("localidad");
                 String codigoPostal = filas.getString("codigoPostal");
-                cliente = new Cliente(nombre, dni, new DireccionPostal(calle, localidad, codigoPostal));
+                cliente = new Cliente(nombre, dni, new DireccionPostal(codigoPostal, calle, localidad));
             }
         } catch (SQLException e) {
             ConexionBD.cierraConexion(conexion);
@@ -146,7 +146,7 @@ public class Clientes {
                 String calle = filas.getString("calle");
                 String localidad = filas.getString("localidad");
                 String codigoPostal = filas.getString("codigoPostal");
-                cliente = new Cliente(nombre, dni, new DireccionPostal(calle, localidad, codigoPostal));
+                cliente = new Cliente(nombre, dni, new DireccionPostal(codigoPostal, calle, localidad));
             }
         } catch (SQLException e) {
             ConexionBD.cierraConexion(conexion);
