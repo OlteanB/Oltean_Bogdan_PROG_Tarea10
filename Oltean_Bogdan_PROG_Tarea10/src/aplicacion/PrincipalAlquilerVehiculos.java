@@ -9,7 +9,7 @@ package aplicacion;
 
 import mvc.controlador.ControladorAlquilerVehiculos;
 import mvc.controlador.IControladorAlquilerVehiculos;
-import mvc.modelo.AlquilerVehiculo;
+import mvc.modelo.ficheros.ModeloFicherosAlquilerVehiculo;
 import mvc.modelo.IModeloAlquilerVehiculo;
 import mvc.vista.IUTextual;
 import mvc.vista.IVistaAlquilerVehiculos;
@@ -21,7 +21,7 @@ import mvc.vista.IVistaAlquilerVehiculos;
 public class PrincipalAlquilerVehiculos {
 
     public static void main(String[] args) {
-        IModeloAlquilerVehiculo modelo = new AlquilerVehiculo();
+        IModeloAlquilerVehiculo modelo = new ModeloFicherosAlquilerVehiculo();
         IVistaAlquilerVehiculos vista = new IUTextual();
         IControladorAlquilerVehiculos controlador = new ControladorAlquilerVehiculos(vista, modelo);
 
