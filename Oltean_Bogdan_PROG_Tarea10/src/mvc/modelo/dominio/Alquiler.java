@@ -22,7 +22,7 @@ public class Alquiler implements Serializable {
     private int dias;
     private final SimpleDateFormat FORMATO_FECHA = new SimpleDateFormat("dd/MM/yy");
     private final int MS_DIA = 1000 * 60 * 60 * 24;
-    private final double PRECIO_DIA = 30;
+    private final double PRECIO_DIA = 30.0;
     private static final long serialVersionUID = 1L;
 
     public Alquiler(Cliente cliente, Vehiculo vehiculo) {
@@ -31,6 +31,13 @@ public class Alquiler implements Serializable {
         fecha = new Date();
         dias = 0;
         vehiculo.setDisponible(false);
+    }
+
+    public Alquiler(Cliente cliente, Vehiculo turismo, Date fecha, int dias) {
+        this.cliente = cliente;
+        this.vehiculo = turismo;
+        this.fecha = fecha;
+        this.dias = dias;
     }
 
     public Cliente getCliente() {
@@ -65,22 +72,23 @@ public class Alquiler implements Serializable {
         double precio = dias * PRECIO_DIA + vehiculo.FACTOR_CILINDRADA / 100;
         return precio;
     }
-    
-    public double getPrecioFijo(){
-        return getPrecio()+vehiculo.getPrecioEspecifico();
+
+    public double getPrecioFijo() {
+        return getPrecio() + vehiculo.getPrecioEspecifico();
     }
 
     @Override
     public String toString() {
         return "Alquiler{" + "Cliente=" + cliente + ", Turismo=" + vehiculo + ", fecha=" + fecha + ", dias=" + dias + '}';
     }
-    
-    public boolean equals (Object obj) {
+
+    public boolean equals(Object obj) {
         Alquiler a = (Alquiler) obj;
-        if(cliente.equals(a.cliente) && vehiculo.equals(a.vehiculo) && fecha.equals(a.fecha))
+        if (cliente.equals(a.cliente) && vehiculo.equals(a.vehiculo) && fecha.equals(a.fecha)) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
 }

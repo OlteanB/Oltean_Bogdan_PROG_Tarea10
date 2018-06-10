@@ -5,13 +5,15 @@
  */
 package mvc.modelo.bd.dao;
 
+import com.mysql.jdbc.Connection;
+import com.mysql.jdbc.PreparedStatement;
+import com.mysql.jdbc.ResultSet;
+import com.mysql.jdbc.Statement;
 import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
-import java.beans.Statement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import java.util.LinkedList;
+import mvc.modelo.bd.ConexionBD;
 import mvc.modelo.dominio.Cliente;
 import mvc.modelo.dominio.DireccionPostal;
 import mvc.modelo.dominio.ExcepcionAlquilerVehiculos;
@@ -24,11 +26,11 @@ public class Clientes {
 
     public LinkedList<Cliente> getClientes() {
         LinkedList<Cliente> clientes = new LinkedList<Cliente>();
-        Connection conexion = accesoBD.estableceConexion();
+        Connection conexion = ConexionBD.estableceConexion();
         try {
             String sentenciaStr = "select nombre, dni, calle, localidad, codigoPostal from clientes";
             Statement sentencia = (Statement) conexion.createStatement();
-            ResultSet filas = sentencia.executeQuery(sentenciaStr);
+            ResultSet filas = (ResultSet) sentencia.executeQuery(sentenciaStr);
             while (filas.next()) {
                 String nombre = filas.getString(1);
                 String dni = filas.getString(2);
@@ -39,15 +41,15 @@ public class Clientes {
                 clientes.add(cliente);
             }
         } catch (SQLException e) {
-            accesoBD.cierraConexion(conexion);
+            ConexionBD.cierraConexion(conexion);
             throw new ExcepcionAlquilerVehiculos("SQL Exception: " + e.toString());
         }
-        accesoBD.cierraConexion(conexion);
+        ConexionBD.cierraConexion(conexion);
         return clientes;
     }
 
-    public void añadir(Cliente cliente) {
-        Connection conexion = accesoBD.estableceConexion();
+    public void anadir(Cliente cliente) {
+        Connection conexion = ConexionBD.estableceConexion();
         try {
             String sentenciaStr = "insert into clientes values (null, ?, ?, ?, ?, ?)";
             PreparedStatement sentencia = (PreparedStatement) conexion.prepareStatement(sentenciaStr);
@@ -59,43 +61,43 @@ public class Clientes {
             sentencia.setString(5, direccion.getCodigoPostal());
             sentencia.executeUpdate();
         } catch (MySQLIntegrityConstraintViolationException e) {
-            accesoBD.cierraConexion(conexion);
+            ConexionBD.cierraConexion(conexion);
             throw new ExcepcionAlquilerVehiculos("Ya existe un cliente con ese DNI");
         } catch (SQLException e) {
-            accesoBD.cierraConexion(conexion);
+            ConexionBD.cierraConexion(conexion);
             throw new ExcepcionAlquilerVehiculos("SQL Exception: " + e.toString());
         }
-        accesoBD.cierraConexion(conexion);
+        ConexionBD.cierraConexion(conexion);
     }
 
     public void borrar(String dni) {
-        Connection conexion = accesoBD.estableceConexion();
+        Connection conexion = ConexionBD.estableceConexion();
         try {
             String sentenciaStr = "delete from clientes where dni = ?";
             PreparedStatement sentencia = (PreparedStatement) conexion.prepareStatement(sentenciaStr);
             sentencia.setString(1, dni);
             if (sentencia.executeUpdate() == 0) {
-                accesoBD.cierraConexion(conexion);
+                ConexionBD.cierraConexion(conexion);
                 throw new ExcepcionAlquilerVehiculos("No existe ningún cliente con ese DNI");
             }
         } catch (MySQLIntegrityConstraintViolationException e) {
-            accesoBD.cierraConexion(conexion);
+            ConexionBD.cierraConexion(conexion);
             throw new ExcepcionAlquilerVehiculos("No se puede borrar un cliente que ya tiene alquileres");
         } catch (SQLException e) {
-            accesoBD.cierraConexion(conexion);
+            ConexionBD.cierraConexion(conexion);
             throw new ExcepcionAlquilerVehiculos("SQL Exception: " + e.toString());
         }
-        accesoBD.cierraConexion(conexion);
+        ConexionBD.cierraConexion(conexion);
     }
 
     public Cliente buscar(String dni) {
         Cliente cliente = null;
-        Connection conexion = accesoBD.estableceConexion();
+        Connection conexion = ConexionBD.estableceConexion();
         try {
             String sentenciaStr = "select nombre, calle, localidad, codigoPostal from clientes where dni = ?";
             PreparedStatement sentencia = (PreparedStatement) conexion.prepareStatement(sentenciaStr);
             sentencia.setString(1, dni);
-            ResultSet filas = sentencia.executeQuery();
+            ResultSet filas = (ResultSet) sentencia.executeQuery();
             if (filas.next()) {
                 String nombre = filas.getString(1);
                 String calle = filas.getString("calle");
@@ -104,40 +106,40 @@ public class Clientes {
                 cliente = new Cliente(nombre, dni, new DireccionPostal(calle, localidad, codigoPostal));
             }
         } catch (SQLException e) {
-            accesoBD.cierraConexion(conexion);
+            ConexionBD.cierraConexion(conexion);
             throw new ExcepcionAlquilerVehiculos("SQL Exception: " + e.toString());
         }
-        accesoBD.cierraConexion(conexion);
+        ConexionBD.cierraConexion(conexion);
         return cliente;
     }
 
     public static int getIdentificador(String dni) {
         int identificador = -1;
-        Connection conexion = accesoBD.estableceConexion();
+        Connection conexion = ConexionBD.estableceConexion();
         try {
             String sentenciaStr = "select identificador from clientes where dni = ?";
             PreparedStatement sentencia = (PreparedStatement) conexion.prepareStatement(sentenciaStr);
             sentencia.setString(1, dni);
-            ResultSet filas = sentencia.executeQuery();
+            ResultSet filas = (ResultSet) sentencia.executeQuery();
             if (filas.next()) {
                 identificador = filas.getInt(1);
             }
         } catch (SQLException e) {
-            accesoBD.cierraConexion(conexion);
+            ConexionBD.cierraConexion(conexion);
             throw new ExcepcionAlquilerVehiculos("SQL Exception: " + e.toString());
         }
-        accesoBD.cierraConexion(conexion);
+        ConexionBD.cierraConexion(conexion);
         return identificador;
     }
 
     public static Cliente buscar(int identificador) {
         Cliente cliente = null;
-        Connection conexion = accesoBD.estableceConexion();
+        Connection conexion = ConexionBD.estableceConexion();
         try {
             String sentenciaStr = "select nombre, dni, calle, localidad, codigoPostal from clientes where identificador = ?";
             PreparedStatement sentencia = (PreparedStatement) conexion.prepareStatement(sentenciaStr);
             sentencia.setInt(1, identificador);
-            ResultSet filas = sentencia.executeQuery();
+            ResultSet filas = (ResultSet) sentencia.executeQuery();
             if (filas.next()) {
                 String nombre = filas.getString(1);
                 String dni = filas.getString(2);
@@ -147,10 +149,10 @@ public class Clientes {
                 cliente = new Cliente(nombre, dni, new DireccionPostal(calle, localidad, codigoPostal));
             }
         } catch (SQLException e) {
-            accesoBD.cierraConexion(conexion);
+            ConexionBD.cierraConexion(conexion);
             throw new ExcepcionAlquilerVehiculos("SQL Exception: " + e.toString());
         }
-        accesoBD.cierraConexion(conexion);
+        ConexionBD.cierraConexion(conexion);
         return cliente;
     }
 }
